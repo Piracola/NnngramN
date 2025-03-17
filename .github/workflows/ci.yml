@@ -86,52 +86,5 @@ jobs:
           name: Nnngram-arm64-v8a-${{ env.SHA7 }}
           path: ${{ env.APK_FILE }}
 
-      - name: Upload mapping
-        uses: actions/upload-artifact@v4
-        with:
-          name: mapping
-          path: TMessagesProj/build/outputs/mapping
 
-      - name: Debug Build (Telegram)
-        run: |
-          echo -e "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}\nRELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}\nRELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}">>local.properties
-          mkdir -p TMessagesProj/config/
-          echo "${{ secrets.KEYSTORE }}" | base64 -d > TMessagesProj/config/release.keystore
-          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > TMessagesProj/google-services.json
-          sed -i 's@xyz.nextalone.nnngram@org.telegram.messenger@' TMessagesProj/build.gradle.kts
-          sed -i 's@xyz.nextalone.nnngram@org.telegram.messenger@' TMessagesProj/google-services.json
-          ./gradlew TMessagesProj:assembleRelease
-          find TMessagesProj/build/outputs/apk -name '*arm64*.apk' -exec mv {} TMessagesProj/build/outputs/apk/Nnngram-arm64-v8a-${{ env.SHA7 }}-Telegram.apk \;
-          echo "APK_FILE=$(find TMessagesProj/build/outputs/apk -name '*arm64*.apk')" >> $GITHUB_ENV
-
-      - uses: actions/upload-artifact@master
-        name: Upload apk (arm64-v8a) (Telegram)
-        with:
-          name: Nnngram-arm64-v8a-${{ env.SHA7 }}-Telegram
-          path: ${{ env.APK_FILE }}
-
-
-      - name: find apk
-        run: |
-            mkdir apks
-            find artifacts -name "*Telegram.apk" -exec rm {} \;
-            find artifacts -name "*.apk" -exec cp {} apks \;
-            echo "APK_FILE_UPLOAD=$(find apks -name '*arm64*.apk')" >> $GITHUB_ENV
-      - name: Get Apk Info
-        id: apk
-        uses: JantHsueh/get-apk-info-action@master
-        with:
-          apkPath: ${{ env.APK_FILE_UPLOAD }}
-
-      - name: Release
-        run: |
-          chmod +x telegram-bot-api-binary
-          ./telegram-bot-api-binary --api-id=21724 --api-hash=3e0cb5efcd52300aec5994fdfc5bdc16 --local 2>&1 > /dev/null &
-          curl https://raw.githubusercontent.com/PreviousAlone/ActionScript/main/uploadCI.py -o uploadCI.py
-          python uploadCI.py
-        env:
-            CHAT_ID: ${{ secrets.TELEGRAM_CHATID }}
-            TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-            VERSION_CODE: ${{ steps.apk.outputs.versionCode }}
-            VERSION_NAME: ${{ steps.apk.outputs.versionNum }}
-            COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+      

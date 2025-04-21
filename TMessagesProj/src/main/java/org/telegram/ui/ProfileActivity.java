@@ -11731,7 +11731,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view;
+            View view = null;
             switch (viewType) {
                 case VIEW_TYPE_HEADER: {
                     view = new HeaderCell(mContext, 23, resourcesProvider);
@@ -11896,39 +11896,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     };
                     view.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
                     break;
-                case VIEW_TYPE_VERSION:
-                default: {
-                    TextInfoPrivacyCell cell = new TextInfoPrivacyCell(mContext, 10, resourcesProvider);
-                    cell.getTextView().setGravity(Gravity.CENTER_HORIZONTAL);
-                    cell.getTextView().setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteGrayText3));
-                    cell.getTextView().setMovementMethod(null);
-                    try {
-                        PackageInfo pInfo = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
-                        int code = pInfo.versionCode / 10;
-                        String abi = "";
-                        switch (pInfo.versionCode % 10) {
-                            case 1:
-                            case 2:
-                                abi = "store bundled " + Build.CPU_ABI + " " + Build.CPU_ABI2;
-                                break;
-                            default:
-                            case 9:
-                                if (ApplicationLoader.isStandaloneBuild()) {
-                                    abi = "direct " + Build.CPU_ABI + " " + Build.CPU_ABI2;
-                                } else {
-                                    abi = "universal " + Build.CPU_ABI + " " + Build.CPU_ABI2;
-                                }
-                                break;
-                        }
-                        cell.setText(formatString("TelegramVersion", R.string.TelegramVersion, String.format(Locale.US, "v%s (%d) %s", pInfo.versionName, code, abi)));
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                    }
-                    cell.getTextView().setPadding(0, AndroidUtilities.dp(14), 0, AndroidUtilities.dp(14));
-                    view = cell;
-                    view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, getThemedColor(Theme.key_windowBackgroundGrayShadow)));
-                    break;
-                }
                 case VIEW_TYPE_SUGGESTION: {
                     view = new SettingsSuggestionCell(mContext, resourcesProvider) {
                         @Override
@@ -11984,11 +11951,60 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     view.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
                     break;
             }
+            default: {
+                // Explicitly check if the intended type is VERSION inside the default block
+                if (viewType == VIEW_TYPE_VERSION) {
+                    // FileLog.d("ProfileActivity.ListAdapter.onCreateViewHolder: Creating explicit VERSION view"); // Optional debug log
+                    TextInfoPrivacyCell cell = new TextInfoPrivacyCell(mContext, 10, resourcesProvider);
+                    cell.getTextView().setGravity(Gravity.CENTER_HORIZONTAL);
+                    cell.getTextView().setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteGrayText3));
+                    cell.getTextView().setMovementMethod(null);
+                    try {
+                        PackageInfo pInfo = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
+                        int code = pInfo.versionCode / 10;
+                        String abi = "";
+                        switch (pInfo.versionCode % 10) {
+                            case 1:
+                            case 2:
+                                abi = "store bundled " + Build.CPU_ABI + " " + Build.CPU_ABI2;
+                                break;
+                            default:
+                            case 9:
+                                if (ApplicationLoader.isStandaloneBuild()) {
+                                    abi = "direct " + Build.CPU_ABI + " " + Build.CPU_ABI2;
+                                } else {
+                                    abi = "universal " + Build.CPU_ABI + " " + Build.CPU_ABI2;
+                                }
+                                break;
+                        }
+                        cell.setText(formatString("TelegramVersion", R.string.TelegramVersion, String.format(Locale.US, "v%s (%d) %s", pInfo.versionName, code, abi)));
+                    } catch (Exception e) {
+                        FileLog.e(e);
+                    }
+                    cell.getTextView().setPadding(0, AndroidUtilities.dp(14), 0, AndroidUtilities.dp(14));
+                    view = cell;
+                    view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, getThemedColor(Theme.key_windowBackgroundGrayShadow)));
+                } else {
+                    FileLog.e("ProfileActivity.ListAdapter.onCreateViewHolder: Unexpected viewType " + viewType + " hit default case. Creating empty placeholder view.");
+                    view = new FrameLayout(mContext);
+                    view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, 1)); // Set height to 1px
+                    view.setVisibility(View.GONE);
+                }
+                break;
+            }
+        }
+        if (view != null) {
             if (viewType != VIEW_TYPE_SHARED_MEDIA) {
-                view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
+                if (view.getLayoutParams() == null) {
+                    view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
+                }
             }
             return new RecyclerListView.Holder(view);
-        }
+        } else {
+            view = new FrameLayout(mContext);
+            view.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+            return new RecyclerListView.Holder(view);
+       }
 
         @Override
         public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {

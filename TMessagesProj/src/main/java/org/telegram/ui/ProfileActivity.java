@@ -11950,32 +11950,30 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     view = frameLayout;
                     view.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
                     break;
-            default: {
-                // Explicitly check if the intended type is VERSION inside the default block
-                if (viewType == VIEW_TYPE_VERSION) {
-                    // FileLog.d("ProfileActivity.ListAdapter.onCreateViewHolder: Creating explicit VERSION view"); // Optional debug log
-                    TextInfoPrivacyCell cell = new TextInfoPrivacyCell(mContext, 10, resourcesProvider);
-                    cell.getTextView().setGravity(Gravity.CENTER_HORIZONTAL);
-                    cell.getTextView().setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteGrayText3));
-                    cell.getTextView().setMovementMethod(null);
-                    try {
-                        PackageInfo pInfo = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
-                        int code = pInfo.versionCode / 10;
-                        String abi = "";
-                        switch (pInfo.versionCode % 10) {
-                            case 1:
-                            case 2:
-                                abi = "store bundled " + Build.CPU_ABI + " " + Build.CPU_ABI2;
-                                break;
-                            default:
-                            case 9:
-                                if (ApplicationLoader.isStandaloneBuild()) {
-                                    abi = "direct " + Build.CPU_ABI + " " + Build.CPU_ABI2;
-                                } else {
-                                    abi = "universal " + Build.CPU_ABI + " " + Build.CPU_ABI2;
-                                }
-                                break;
-                        }
+                default: {
+                    if (viewType == VIEW_TYPE_VERSION) {
+                        TextInfoPrivacyCell cell = new TextInfoPrivacyCell(mContext, 10, resourcesProvider);
+                        cell.getTextView().setGravity(Gravity.CENTER_HORIZONTAL);
+                        cell.getTextView().setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteGrayText3));
+                        cell.getTextView().setMovementMethod(null);
+                        try {
+                            PackageInfo pInfo = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
+                            int code = pInfo.versionCode / 10;
+                            String abi = "";
+                            switch (pInfo.versionCode % 10) {
+                                case 1:
+                                case 2:
+                                    abi = "store bundled " + Build.CPU_ABI + " " + Build.CPU_ABI2;
+                                    break;
+                                default:
+                                case 9:
+                                    if (ApplicationLoader.isStandaloneBuild()) {
+                                        abi = "direct " + Build.CPU_ABI + " " + Build.CPU_ABI2;
+                                    } else {
+                                        abi = "universal " + Build.CPU_ABI + " " + Build.CPU_ABI2;
+                                    }
+                                    break;
+                            }
                         cell.setText(formatString("TelegramVersion", R.string.TelegramVersion, String.format(Locale.US, "v%s (%d) %s", pInfo.versionName, code, abi)));
                     } catch (Exception e) {
                         FileLog.e(e);
@@ -11992,18 +11990,19 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 break;
             }
         }
-        if (view != null) {
-            if (viewType != VIEW_TYPE_SHARED_MEDIA) {
-                if (view.getLayoutParams() == null) {
-                    view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
+            if (view != null) {
+                if (viewType != VIEW_TYPE_SHARED_MEDIA) {
+                    if (view.getLayoutParams() == null) {
+                        view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
+                    }
                 }
-            }
-            return new RecyclerListView.Holder(view);
-        } else {
-            view = new FrameLayout(mContext);
-            view.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
-            return new RecyclerListView.Holder(view);
-       }
+                return new RecyclerListView.Holder(view);
+            } else {
+                view = new FrameLayout(mContext);
+                view.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+                return new RecyclerListView.Holder(view);
+                }
+        }
 
         @Override
         public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {

@@ -11950,7 +11950,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     view = frameLayout;
                     view.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
                     break;
-            }
             default: {
                 // Explicitly check if the intended type is VERSION inside the default block
                 if (viewType == VIEW_TYPE_VERSION) {

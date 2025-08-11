@@ -46,6 +46,7 @@ public class NotificationCenter {
     public static final int historyCleared = totalEvents++;
     public static final int messagesRead = totalEvents++;
     public static final int threadMessagesRead = totalEvents++;
+    public static final int monoForumMessagesRead = totalEvents++;
     public static final int commentsRead = totalEvents++;
     public static final int changeRepliesCounter = totalEvents++;
     public static final int messagesDidLoad = totalEvents++;
@@ -235,6 +236,7 @@ public class NotificationCenter {
     public static final int boostedChannelByUser = totalEvents++;
     public static final int boostByChannelCreated = totalEvents++;
     public static final int didUpdatePremiumGiftStickers = totalEvents++;
+    public static final int didUpdateTonGiftStickers = totalEvents++;
     public static final int didUpdatePremiumGiftFieldIcon = totalEvents++;
     public static final int storiesEnabledUpdate = totalEvents++;
     public static final int storiesBlocklistUpdate = totalEvents++;
@@ -349,7 +351,7 @@ public class NotificationCenter {
     public static final int permissionsGranted = totalEvents++;
     public static final int activityPermissionsGranted = totalEvents++;
     public static final int topicsDidLoaded = totalEvents++;
-    public static final int chatSwithcedToForum = totalEvents++;
+    public static final int chatSwitchedForum = totalEvents++;
     public static final int didUpdateGlobalAutoDeleteTimer = totalEvents++;
     public static final int onDatabaseReset = totalEvents++;
     public static final int wallpaperSettedToUser = totalEvents++;
@@ -364,6 +366,8 @@ public class NotificationCenter {
     public static final int onReceivedChannelDifference = totalEvents++;
     public static final int storiesReadUpdated = totalEvents++;
     public static final int nearEarEvent = totalEvents++;
+    public static final int translationModelDownloading = totalEvents++;
+    public static final int translationModelDownloaded = totalEvents++;
 
     public static boolean alreadyLogged;
 

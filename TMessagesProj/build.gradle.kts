@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.biometric)
 
     compileOnly(libs.checker.compat.qual)
+    compileOnly(libs.checker.qual)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.config)
     implementation(libs.play.services.vision)
@@ -101,8 +102,6 @@ dependencies {
     implementation(libs.ktor.client.contentNegotiation)
     implementation(libs.ktor.serialization.json)
 
-    implementation(files("libs/ffmpeg-kit-video-4.4.LTS.aar"))
-    implementation(libs.smart.exception.java)
     implementation(libs.lottie)
 
     implementation(libs.mediarouter)
@@ -206,7 +205,7 @@ android {
 
 //    androidComponents {
 //        onVariants { variant ->
-//            variant.buildConfigFields.put("isPlay", BuildConfigField("boolean", variant.name.lowercase() == "play", null))
+//            variant.buildConfigFields!!.put("isPlay", BuildConfigField("boolean", variant.name.lowercase() == "play", null))
 //        }
 //    }
 
